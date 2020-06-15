@@ -4,8 +4,8 @@
 
 ## Links and Resources:
 
-- [PR]()
-- [CI/CD - GH Actions]()
+- [PR](https://github.com/bushra-401-advanced-javascript/caps/pull/1)
+- [CI/CD - GH Actions](https://github.com/bushra-401-advanced-javascript/caps/pull/1/checks?check_run_id=771561119)
 
 ## Setup:
 
