@@ -6,7 +6,7 @@ const uuidv4 = require('uuid').v4;
 
 const server = net.createServer();
 
-server.listen(PORT,()=> console.log(`The server is up on PORT ${PORT}`));
+server.listen(PORT,()=> console.log(`\nThe server is up on PORT ${PORT}\n*******************************\n\n`));
 const socketPool = {};
 
 server.on('connection', (socket)=> {
@@ -39,7 +39,7 @@ function broadcast(data) {
 
 function logger(event, payload){
   const time = new Date();
-  console.log({event, time, payload});
+  console.log(`* * * ${event} * * *\n\n`, {event, time, payload}, '\n\n* * * * * *\n\n');
 }
 
 server.on('error', (e) => console.log('Caps SERVER ERROR!', e.message));

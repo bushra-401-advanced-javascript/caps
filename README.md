@@ -10,14 +10,17 @@
 ## Setup:
 
 - `.env` variables:  
-  `STORE_NAME='1-206-flowers'`
+  - `PORT=3000`
+  -  `HOST='localhost'`
+  - `STORE_NAME='1-206-flowers'`
 
 ### How to run the app:
 
 - Clone the app repo
 - Run the command `npm i`
 - Add the `.env` file and the enviroument variables
-- Start the app by running the command `node caps.js`
+- Start the app by running the command `node caps.js` inside caps directory to start the server,
+  and `node driver.js` inside the driver directory and `node vendor.js` inside the vendor directory
 - Run the test by the command `npm run test`
 
 
