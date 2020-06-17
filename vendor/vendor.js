@@ -3,48 +3,28 @@
 require('dotenv').config();
 const storeName = process.env.STORE_NAME;
 const faker = require('faker');
-const net = require('net');
-const client = new net.Socket();
 const HOST = process.env.HOST || 'localhost';
 const PORT = process.env.PORT || 3000;
+const io = require('socket.io-client');
 
+const socket = io.connect(`http://${HOST}:${PORT}/caps`);
 
-// client.connect(PORT, HOST, () => {
-//   console.log('\nvendor is connected**\n**********************\n');
-//   generateOrder();
-//   client.on('data', (data) => {
-//     const event = JSON.parse(data);
-//     if (event.event === 'delivered') {
-//       thankLogger();
-//     }
-//   })
-// });
+socket.emit('join', storeName);
 
+socket.on('delivered', payload => {
+  console.log(`\nThank you for delivering: ${payload.orderId}\n`);
+});
 
-client.on('error', (err) => console.log('Vendor ERROR:\n ', err.message));
+setInterval(() => {
+  let randomName = faker.name.findName();
+  let randomID = faker.random.uuid();
+  let randomAddress = faker.fake('{{address.city}}, {{address.stateAbbr}}');
+  let deliveryOrder = {
+    storeName: storeName,
+    orderId: randomID,
+    customerName: randomName,
+    address: randomAddress,
+  }
+  socket.emit('pick-up', deliveryOrder);
+}, 5000);
 
-function generateOrder(){
-  setTimeout(()=> {
-    let randomName = faker.name.findName();
-    let randomID = faker.random.uuid();
-    let randomAddress = faker.fake('{{address.city}}, {{address.stateAbbr}}');
-    let order = {
-      storeName: storeName,
-      orderId: randomID,
-      customerName: randomName,
-      address: randomAddress,
-    };
-    const message = JSON.stringify({
-      event:'pick-up',
-      payload:order
-    });
-    client.write(message);
-    generateOrder();
-  }, 5000 );
-}
-
-function thankLogger(){
-    console.log('-----------------\nThank you!\n-----------------\n');
-}
-
-module.exports = thankLogger;
