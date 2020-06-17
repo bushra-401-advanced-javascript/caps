@@ -36,6 +36,7 @@ caps.on('connection', socket => {
 
 function logIt(event, payload) {
   let time = new Date().toISOString();
-  console.log({time, event, payload});
+  console.log(`* * * ${event} * * *`);
+  console.log({time, event, payload}, '\n');
 }
 

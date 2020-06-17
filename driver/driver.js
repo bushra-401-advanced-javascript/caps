@@ -8,12 +8,12 @@ const socket = io.connect(`http://${HOST}:${PORT}/caps`);
 
 socket.on('pick-up', payload => {
   setTimeout(() => {
-    console.log(`\nDRIVER: picked up ${payload.orderId}\n`);
+    console.log(`\n------------------------\nDRIVER: picked up ${payload.orderId}\n------------------------\n`);
     socket.emit('on-transit', payload);
   }, 2000);
 
   setTimeout(() => {
-    console.log(`\ndelivered: ${payload.orderId}\n`);
+    console.log(`\n------------------------\ndelivered: ${payload.orderId}\n------------------------\n`);
     socket.emit('delivered', payload);
   });
 });

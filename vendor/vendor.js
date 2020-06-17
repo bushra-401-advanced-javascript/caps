@@ -12,7 +12,7 @@ const socket = io.connect(`http://${HOST}:${PORT}/caps`);
 socket.emit('join', storeName);
 
 socket.on('delivered', payload => {
-  console.log(`\nThank you for delivering: ${payload.orderId}\n`);
+  console.log(`\n------------------------\nThank you for delivering: ${payload.orderId}\n------------------------\n`);
 });
 
 setInterval(() => {
