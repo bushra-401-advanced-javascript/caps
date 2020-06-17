@@ -9,16 +9,17 @@ const HOST = process.env.HOST || 'localhost';
 const PORT = process.env.PORT || 3000;
 
 
-client.connect(PORT, HOST, () => {
-  console.log('\nvendor is connected**\n**********************\n');
-  generateOrder();
-  client.on('data', (data) => {
-    const event = JSON.parse(data);
-    if (event.event === 'delivered') {
-      thankLogger();
-    }
-  })
-});
+// client.connect(PORT, HOST, () => {
+//   console.log('\nvendor is connected**\n**********************\n');
+//   generateOrder();
+//   client.on('data', (data) => {
+//     const event = JSON.parse(data);
+//     if (event.event === 'delivered') {
+//       thankLogger();
+//     }
+//   })
+// });
+
 
 client.on('error', (err) => console.log('Vendor ERROR:\n ', err.message));
 

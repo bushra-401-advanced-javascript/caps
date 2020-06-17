@@ -1,19 +1,23 @@
 'use strict';
 
-const net = require('net');
+// const net = require('net');
 const PORT = process.env.PORT || 3000;
 const uuidv4 = require('uuid').v4;
+// const server = net.createServer();
 
-const server = net.createServer();
+// server.listen(PORT,()=> console.log(`\nThe server is up on PORT ${PORT}\n*******************************\n\n`));
 
-server.listen(PORT,()=> console.log(`\nThe server is up on PORT ${PORT}\n*******************************\n\n`));
+const io = require('socket.io')(PORT);
+
 const socketPool = {};
 
-server.on('connection', (socket)=> {
+io.on('connection', (socket)=> {
+  console.log(`\nThe server is up on PORT ${PORT}\n*******************************\n\n`);
   const id = `socket-${uuidv4()}`;
   socketPool[id] = socket;
   socket.on('data', (buffer)=> dispatchEvent(buffer));  
 });
+
 function dispatchEvent(buffer) {
   const data = JSON.parse(buffer.toString().trim());
   let verfication=0;
@@ -29,6 +33,7 @@ function dispatchEvent(buffer) {
     broadcast(data);
   }
 }
+
 function broadcast(data) {
   const payload = JSON.stringify(data);
   for (let socket in socketPool) {
@@ -42,6 +47,6 @@ function logger(event, payload){
   console.log(`* * * ${event} * * *\n\n`, {event, time, payload}, '\n\n* * * * * *\n\n');
 }
 
-server.on('error', (e) => console.log('Caps SERVER ERROR!', e.message));
+io.on('error', (e) => console.log('Caps SERVER ERROR!', e.message));
 
 module.exports = logger;
