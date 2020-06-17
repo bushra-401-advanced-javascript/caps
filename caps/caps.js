@@ -1,47 +1,42 @@
 'use strict';
 
-const net = require('net');
 const PORT = process.env.PORT || 3000;
-const uuidv4 = require('uuid').v4;
+const io = require('socket.io')(PORT);
 
-const server = net.createServer();
-
-server.listen(PORT,()=> console.log(`\nThe server is up on PORT ${PORT}\n*******************************\n\n`));
-const socketPool = {};
-
-server.on('connection', (socket)=> {
-  const id = `socket-${uuidv4()}`;
-  socketPool[id] = socket;
-  socket.on('data', (buffer)=> dispatchEvent(buffer));  
+io.on('connection', socket => {
+  console.log(`\nThe server is up on PORT ${PORT}\nCORE ${socket.id}\n*******************************\n\n`);
 });
-function dispatchEvent(buffer) {
-  const data = JSON.parse(buffer.toString().trim());
-  let verfication=0;
-  Object.keys(data).forEach(key=> {
-    if(key==='payload'){
-      verfication++;
-    }
-    if(key === 'event'){
-      verfication++;
-    }
+
+//caps namespace
+const caps = io.of('/caps');
+
+caps.on('connection', socket => {
+  console.log('***Connected***', socket.id);
+  socket.on('join', room => {
+    console.log(`Registered As: ${room}`);
+    socket.join(room);
   });
-  if (verfication ===2){
-    broadcast(data);
-  }
-}
-function broadcast(data) {
-  const payload = JSON.stringify(data);
-  for (let socket in socketPool) {
-    socketPool[socket].write(payload); 
-  }
-  logger(data.event, data.payload);
+
+  socket.on('pick-up', payload => {
+    logIt('pick-up', payload);
+    caps.emit('pick-up', payload);
+  });
+
+  socket.on('on-transit', payload => {
+    logIt('on-transit', payload);
+    caps.to(payload.storeName).emit('on-transit', payload);
+  });
+
+  socket.on('delivered', payload => {
+    logIt('delivered', payload);
+    caps.to(payload.storeName).emit('delivered', payload);
+  });
+
+});
+
+function logIt(event, payload) {
+  let time = new Date().toISOString();
+  console.log(`* * * ${event} * * *`);
+  console.log({time, event, payload}, '\n');
 }
 
-function logger(event, payload){
-  const time = new Date();
-  console.log(`* * * ${event} * * *\n\n`, {event, time, payload}, '\n\n* * * * * *\n\n');
-}
-
-server.on('error', (e) => console.log('Caps SERVER ERROR!', e.message));
-
-module.exports = logger;
